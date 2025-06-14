@@ -26,7 +26,6 @@ namespace SmartApp.Persistence.Repositories
 
         public async Task<string> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            string responseMsg = string.empty();
 
             try
             {
@@ -50,9 +49,5 @@ namespace SmartApp.Persistence.Repositories
         public void Dispose()
             => _context.Dispose();
 
-        Task<int> IUnitOfWork.SaveChangesAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

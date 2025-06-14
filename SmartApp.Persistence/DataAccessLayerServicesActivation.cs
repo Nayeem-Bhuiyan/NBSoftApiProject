@@ -12,8 +12,17 @@ namespace SmartApp.Persistence
     {
         public static void AddDataAccessLayerServicesActivation(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(configuration.GetConnectionString("AppDbConnection"), x => x.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
-            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddDbContext<ApplicationDbContext>(option =>
+                option.UseSqlServer(
+                    configuration.GetConnectionString("AppDbConnection"),
+                    x => x.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
+                )
+            );
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }
+
+ 
+
