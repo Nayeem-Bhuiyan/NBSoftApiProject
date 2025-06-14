@@ -13,3 +13,7 @@
 /SmartApp.Shared/obj
 /SmartApp.WebApi/obj
 /.vs
+/SmartApp.Application/bin/Debug/net9.0
+/SmartApp.WebApi/bin/Debug/net9.0
+/SmartApp.Persistence/bin/Debug/net9.0
+/SmartApp.Infrastructure/bin/Debug/net9.0
