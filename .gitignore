@@ -1,0 +1,14 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/SmartApp
+/Domain/obj
+/SmartApp.Application/obj
+/SmartApp.Domain/bin/Debug/net9.0
+/SmartApp.Domain/obj
+/SmartApp.Infrastructure/obj
+/SmartApp.Persistence/obj
+/SmartApp.Shared/bin/Debug/net9.0
+/SmartApp.Shared/obj
+/SmartApp.WebApi/obj
