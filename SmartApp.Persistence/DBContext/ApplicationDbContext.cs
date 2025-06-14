@@ -93,7 +93,11 @@ namespace SmartApp.Persistence.DBContext
                 new Country // 1
                 {
                     Id=1,
-                    Name = "Bangladesh"
+                    Name = "Bangladesh",
+                    Continent="Asia",
+                    Code="",
+                    PhoneCode="+880",
+                    Currency = "Taka"
                 }
             });
             #endregion

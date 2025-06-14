@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SmartApp.Application.Interfaces.Repositories;
-using SmartApp.Persistence.Contexts;
+using SmartApp.Persistence.DBContext;
 using SmartApp.Persistence.Repositories;
 
 
