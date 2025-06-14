@@ -291,26 +291,26 @@ public class FileProcessService : IFileProcessService
 
                 if (!File.Exists(currentPath))
                 {
-                    data.Success=false;
+                    data.IsSuccess=false;
                     data.Message=string.Format("Rename failed. File {CurrentName} not found.", currentName);
                     return data;
                 }
 
                 if (File.Exists(newPath))
                 {
-                    data.Success=false;
+                    data.IsSuccess=false;
                     data.Message=string.Format("Rename failed. Destination file {NewName} already exists.", newName);
                     return data;
                 }
 
                 File.Move(currentPath, newPath);
-                data.Success=true;
+                data.IsSuccess=true;
                 data.Message=string.Format("Renamed image from {CurrentName} to {NewName}.", currentName, newName);
                 return data;
             }
             catch (Exception ex)
             {
-                data.Success=false;
+                data.IsSuccess=false;
                 data.Message=string.Format("Failed to rename image from {CurrentName} to {NewName}."+ex.Message, currentName, newName);
                 return data;
             }
@@ -386,15 +386,6 @@ public class FileProcessService : IFileProcessService
             return Path.Combine(folderPath, fileName);
         }
 
-        public Task<ImageProcessedResult> ProcessImageAsync(IFormFile imageFile, string fileName = null, bool willSaveInFolder = false, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<FileProcessedResult> SaveDocumentAsync(IFormFile docFile, string fileName = null, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartApp.Persistence.Contexts
+namespace SmartApp.Domain.Entities
 {
-    public class ApplicationDbContext : DbContext
+    public class BaseEntity
     {
+        public int Id { get; set; }
     }
 }

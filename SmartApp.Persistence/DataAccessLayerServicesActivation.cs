@@ -1,0 +1,19 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using SmartApp.Application.Interfaces.Repositories;
+using SmartApp.Persistence.Contexts;
+using SmartApp.Persistence.Repositories;
+
+
+namespace SmartApp.Persistence
+{
+    public static class DataAccessLayerServicesActivation
+    {
+        public static void AddDataAccessLayerServicesActivation(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(configuration.GetConnectionString("AppDbConnection"), x => x.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+        }
+    }
+}

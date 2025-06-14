@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SmartApp.Application.DTOs.Common;
+using SmartApp.Shared.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace SmartApp.Application.Interfaces.Common
         Task<ImageProcessedResult> ProcessImageAsync(IFormFile imageFile, string fileName = null, bool willSaveInFolder = false, string subfolder = null, CancellationToken cancellationToken = default);
         Task<FileProcessedResult> SaveDocumentAsync(IFormFile docFile, string fileName = null, string subfolder = null, CancellationToken cancellationToken = default);
         string DeleteImage(string imageName);
-        bool RenameImage(string currentName, string newName);
+        CommonResponse RenameImage(string currentName, string newName);
         string GetImageFullPath(string imageName);
         string GetDocumentFullPath(string docName);
     }
