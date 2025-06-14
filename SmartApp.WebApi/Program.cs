@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using SmartApp.Application.DTOs.Common;
-using SmartApp.Application.ModelMapper.NBSoft.Application.ModelMapper;
+using SmartApp.Application.ModelMapper;
 using SmartApp.Infrastructure;
 using SmartApp.Persistence;
 

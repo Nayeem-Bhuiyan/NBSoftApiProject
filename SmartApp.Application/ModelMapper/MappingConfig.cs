@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,21 +7,7 @@ using System.Threading.Tasks;
 
 namespace SmartApp.Application.ModelMapper
 {
-    using AutoMapper;
-    using NBSoft.Application.ViewModel.Campus;
-    using NBSoft.Application.ViewModel.HRM;
-    using NBSoft.Domain.Model.Campus;
-    using NBSoft.Domain.Model.HRM;
-    using SmartApp.Domain.Entities.MasterData;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
-    namespace NBSoft.Application.ModelMapper
-    {
         public class MappingConfig : Profile
         {
             public MappingConfig()
@@ -34,5 +21,5 @@ namespace SmartApp.Application.ModelMapper
                 #endregion
             }
         }
-    }
+    
 }
