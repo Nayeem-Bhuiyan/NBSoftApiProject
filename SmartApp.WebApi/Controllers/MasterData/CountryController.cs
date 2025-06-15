@@ -1,0 +1,67 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using SmartApp.Application.Interfaces.MasterData;
+using SmartApp.Domain.Entities.MasterData;
+using SmartApp.Shared.Common;
+
+namespace SmartApp.API.Controllers.MasterData
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CountryController : ControllerBase
+    {
+        private readonly ICountryService _countryService;
+
+        public CountryController(ICountryService countryService)
+        {
+            _countryService = countryService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Country country)
+        {
+            var result = await _countryService.CreateAsync(country);
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] Country country)
+        {
+            var result = await _countryService.UpdateAsync(country);
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _countryService.DeleteAsync(id);
+            if (!result.Success)
+                return NotFound(result);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var result = await _countryService.GetByIdAsync(id);
+            if (!result.Success)
+                return NotFound(result);
+
+            return Ok(result);
+        }
+
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPaged([FromQuery] string? filter, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        {
+            var result = await _countryService.GetPagedAsync(filter, pageIndex, pageSize);
+            return Ok(result);
+        }
+    }
+}
+
