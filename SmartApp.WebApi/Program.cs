@@ -22,8 +22,8 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 // Register custom services
-builder.Services.AddDataAccessLayerServicesActivation(builder.Configuration);
-builder.Services.AddServiceLayerServicesActivation();
+builder.Services.AddPersistenceDI(builder.Configuration);
+builder.Services.AddInfrastructureDI();
 
 //builder.Services.AddHttpContextAccessor();
 
