@@ -33,7 +33,12 @@ namespace SmartApp.Persistence.Repositories
             ? Response<T>.SuccessResponse(entity)
             : Response<T>.Failure("Not found");
     }
-    public Task<Response<T>> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task<Response<T>> AddAsync(T entity, CancellationToken cancellationToken = default)
+        {
+            await _dbSet.AddAsync(entity, cancellationToken);
+            return Response<T>.SuccessResponse(entity, "Successfully created");
+        }
+        public Task<Response<T>> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
         _dbSet.Update(entity);
         return Task.FromResult(Response<T>.SuccessResponse(entity, "successfully updated"));
@@ -84,8 +89,20 @@ namespace SmartApp.Persistence.Repositories
 
         return Response<PagedResult<T>>.SuccessResponse(result);
     }
+    public async Task<Response<T>> SqlQuerySingleAsync(string sql,object[]? parameters = null,CancellationToken cancellationToken = default)
+        {
+            var result = await _dbSet
+                .FromSqlRaw(sql, parameters ?? Array.Empty<object>())
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
 
-    public async Task<Response<IEnumerable<T>>> ExecuteSqlAsync(
+            if (result == null)
+                return Response<T>.Failure("No record found");
+
+            return Response<T>.SuccessResponse(result);
+        }
+
+        public async Task<Response<IEnumerable<T>>> SqlQueryListAsync(
         string sql,
         object[]? parameters = null,
         CancellationToken cancellationToken = default)
@@ -107,15 +124,7 @@ namespace SmartApp.Persistence.Repositories
         return Response<int>.SuccessResponse(rows, "Command executed.");
     }
 
-        public IQueryable<T> Query()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<Response<T>> AddAsync(T entity, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 

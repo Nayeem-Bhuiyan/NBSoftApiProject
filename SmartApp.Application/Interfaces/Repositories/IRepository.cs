@@ -11,7 +11,7 @@ namespace SmartApp.Application.Interfaces.Repositories
 
     public interface IRepository<T> where T : class
     {
-        IQueryable<T> Query();
+        IQueryable<T> Query(bool asNoTracking = true);
 
         Task<Response<T>> GetByIdAsync(object id, CancellationToken cancellationToken = default);
         Task<Response<T>> AddAsync(T entity, CancellationToken cancellationToken = default);
@@ -24,8 +24,8 @@ namespace SmartApp.Application.Interfaces.Repositories
             int pageSize,
             CancellationToken cancellationToken = default
         );
-
-        Task<Response<IEnumerable<T>>> ExecuteSqlAsync(
+        Task<Response<T>> SqlQuerySingleAsync(string sql, object[]? parameters = null, CancellationToken cancellationToken = default);
+        Task<Response<IEnumerable<T>>> SqlQueryListAsync(
             string sql,
             object[]? parameters = null,
             CancellationToken cancellationToken = default

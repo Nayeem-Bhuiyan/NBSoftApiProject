@@ -10,6 +10,10 @@ namespace SmartApp.Application.Interfaces.MasterData
 {
     public interface ICountryService
     {
-        Task<Response<Country>> CreateAsync(Country emp);
+        Task<Response<Country>> CreateAsync(Country country);
+        Task<Response<Country>> UpdateAsync(Country country);
+        Task<Response<bool>> DeleteAsync(object id);
+        Task<Response<Country>> GetByIdAsync(object id);
+        Task<Response<PagedResult<Country>>> GetPagedAsync(string? filter, int pageIndex, int pageSize);
     }
 }

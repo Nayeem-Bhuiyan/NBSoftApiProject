@@ -12,7 +12,7 @@ namespace SmartApp.Persistence.DBContext
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
-        internal object tblName;
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
@@ -73,7 +73,7 @@ namespace SmartApp.Persistence.DBContext
 
             #region Rename_Identity_TableName
             modelBuilder.Entity<ApplicationUser>(entity => { entity.ToTable(name: "UserInfo"); });
-            modelBuilder.Entity<IdentityRole>(entity => { entity.ToTable(name: "Roles"); });
+            modelBuilder.Entity<ApplicationRole>(entity => { entity.ToTable(name: "Roles"); });
             modelBuilder.Entity<IdentityUserRole<string>>(entity => { entity.ToTable("UserRoles"); });
             modelBuilder.Entity<IdentityUserClaim<string>>(entity => { entity.ToTable("UserClaims"); });
             modelBuilder.Entity<IdentityUserLogin<string>>(entity => { entity.ToTable("UserLogins"); });

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartApp.Application.Interfaces.Repositories;
 using SmartApp.Persistence.DBContext;
+using SmartApp.Shared.Common;
 
 namespace SmartApp.Persistence.Repositories
 {
@@ -25,26 +26,26 @@ namespace SmartApp.Persistence.Repositories
             return repositoryInstance;
         }
 
-        public async Task<string> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public async Task<Response<int>> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-
             try
             {
-                if (await _context.SaveChangesAsync(cancellationToken)>1)
-                    return "success";
+                var count = await _context.SaveChangesAsync(cancellationToken);
+                if (count > 0)
+                    return Response<int>.SuccessResponse(count, "Save successful");
                 else
-                    return "No record saved";
-
+                    return Response<int>.Failure("No records were saved");
             }
             catch (DbUpdateException ex)
             {
-                return "Database update failed: " + ex.Message;
+                return Response<int>.Failure("Database update failed: " + ex.Message);
             }
             catch (Exception ex)
             {
-                return "An error occurred during SaveChangesAsync:" + ex.Message;
+                return Response<int>.Failure("An error occurred during SaveChangesAsync: " + ex.Message);
             }
         }
+
 
 
         public void Dispose()
