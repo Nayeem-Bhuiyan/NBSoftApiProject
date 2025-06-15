@@ -16,26 +16,20 @@ builder.Logging.AddJsonConsole();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-// Add services to the container.
-
+// Add services to the container
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddDistributedMemoryCache(); // Add a distributed memory cache
 
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 
-#region AddSession
-builder.Services.AddSession(options =>
-{
-    options.Cookie.Name = ".SmartEducation.Session";
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+// Register custom services
+builder.Services.AddDataAccessLayerServicesActivation(builder.Configuration);
+builder.Services.AddServiceLayerServicesActivation();
 
-#endregion
+//builder.Services.AddHttpContextAccessor();
 
-#region IdentityOptions
+builder.Services.Configure<FileImageSettings>(builder.Configuration.GetSection("FileImageSettings"));
+
+// Identity options config
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = false;
@@ -44,40 +38,15 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
     options.User.RequireUniqueEmail = true;
-    //options.User.AllowedUserNameCharacters = true;
-    //Lockout settings
+
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
     options.Lockout.MaxFailedAccessAttempts = 5;
-
 });
 
-#endregion
-
-
-#region Package_Services_Activation
-builder.Services.AddAutoMapper(typeof(MappingConfig));
-
-#endregion
-
-#region Config_CustomServices_Activation
-//builder.Services.AddTransient<IMailService, MailService>();
-builder.Services.AddDataAccessLayerServicesActivation(builder.Configuration);
-builder.Services.AddServiceLayerServicesActivation();
-#endregion
-
-
-#region Custom_Service_Register
-// Bind appsettings section to POCO
-builder.Services.Configure<FileImageSettings>(builder.Configuration.GetSection("FileImageSettings"));
-
-#endregion
-
-
+#region Swagger_Config_1
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-
-    // Set metadata
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "SmartApp API",
@@ -90,7 +59,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    // JWT Bearer auth (if needed)
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
@@ -108,38 +76,31 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
-
+#endregion
 
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    #region Swagger_Config_2
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartApp API V1");
-        options.RoutePrefix = "swagger"; // default
+        options.RoutePrefix = "swagger";
     });
+    #endregion
 }
 
-// OR: if you want Swagger always enabled
-//app.UseSwagger();
-//app.UseSwaggerUI();
-
-app.UseDefaultFiles(); // Must be before UseStaticFiles
-app.UseStaticFiles();
 app.UseHttpsRedirection();
-app.UseCookiePolicy();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 
 app.MapControllers();
-
 app.Run();
