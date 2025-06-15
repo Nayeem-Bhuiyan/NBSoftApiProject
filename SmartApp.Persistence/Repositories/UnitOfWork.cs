@@ -1,15 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartApp.Application.Interfaces.Repositories;
+using SmartApp.Persistence.DBContext;
 
 namespace SmartApp.Persistence.Repositories
 {
 
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private readonly DbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly Dictionary<Type, object> _repositories = new();
 
-        public UnitOfWork(DbContext context)
+        public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
         }

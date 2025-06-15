@@ -4,8 +4,13 @@ using SmartApp.Application.ModelMapper;
 using SmartApp.Infrastructure;
 using SmartApp.Persistence;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseWebRoot(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"));
+var options = new WebApplicationOptions
+{
+    ContentRootPath = Directory.GetCurrentDirectory(),
+    WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")
+};
+
+var builder = WebApplication.CreateBuilder(options);
 
 builder.Logging.AddJsonConsole();
 builder.Logging.AddConsole();
@@ -17,7 +22,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache(); // Add a distributed memory cache
-//builder.Services.AddRazorPages().AddNewtonsoftJson();
+
 
 #region AddSession
 builder.Services.AddSession(options =>
@@ -68,18 +73,65 @@ builder.Services.Configure<FileImageSettings>(builder.Configuration.GetSection("
 #endregion
 
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+    // Set metadata
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "SmartApp API",
+        Version = "v1",
+        Description = "API documentation for SmartApp Web API",
+        Contact = new()
+        {
+            Name = "Nayeem Bhuiyan",
+            Email = "nayeem.datasoft2022@gmail.com",
+        }
+    });
+
+    // JWT Bearer auth (if needed)
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Enter JWT token like: Bearer {your token}",
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartApp API V1");
+        options.RoutePrefix = "swagger"; // default
+    });
 }
 
+// OR: if you want Swagger always enabled
+//app.UseSwagger();
+//app.UseSwaggerUI();
+
+app.UseDefaultFiles(); // Must be before UseStaticFiles
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseCookiePolicy();

@@ -10,5 +10,6 @@ namespace SmartApp.Shared.Common
     {
         public bool IsSuccess { get; set; }
         public string Message { get; set; } = string.Empty;
+        public dynamic data { get; set; } = null;
     }
 }
