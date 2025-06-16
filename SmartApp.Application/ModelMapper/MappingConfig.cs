@@ -18,7 +18,7 @@ namespace SmartApp.Application.ModelMapper
             {
 
                     #region MasterData
-                    CreateMap<Country, CountryDto>();
+                    CreateMap<Country, CountryDto>().ReverseMap();
                     CreateMap<CreateCountryDto, Country>();
                     CreateMap<UpdateCountryDto, Country>();
                     #endregion
