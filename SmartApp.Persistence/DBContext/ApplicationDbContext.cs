@@ -23,7 +23,7 @@ namespace SmartApp.Persistence.DBContext
         #endregion
 
         #region ViewModel_Data_Retrive
-        public DbSet<VmDropdownInfo> VmDropdownInfo { get; set; } = null;
+        public DbSet<DropdownDto> VmDropdownInfo { get; set; } = null;
         #endregion
 
         // Auto change tracker for audit fields
@@ -81,7 +81,7 @@ namespace SmartApp.Persistence.DBContext
             modelBuilder.Entity<IdentityRoleClaim<string>>(entity => { entity.ToTable("RoleClaims"); });
             #endregion
 
-            modelBuilder.Entity<VmDropdownInfo>().HasNoKey().ToView("view_name_that_doesnt_exist");
+            modelBuilder.Entity<DropdownDto>().HasNoKey().ToView("view_name_that_doesnt_exist");
 
             #region SEED_DATA
 

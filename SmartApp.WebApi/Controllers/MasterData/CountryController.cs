@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SmartApp.Application.DTOs.MasterData.Country;
 using SmartApp.Application.Interfaces.MasterData;
 using SmartApp.Domain.Entities.MasterData;
 using SmartApp.Shared.Common;
@@ -26,9 +27,9 @@ namespace SmartApp.API.Controllers.MasterData
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Country country)
+        public async Task<IActionResult> Create([FromBody] CreateCountryDto createDto)
         {
-            var result = await _countryService.CreateAsync(country);
+            var result = await _countryService.CreateAsync(createDto);
             if (!result.isSuccess)
                 return BadRequest(result);
 
@@ -36,9 +37,9 @@ namespace SmartApp.API.Controllers.MasterData
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Country country)
+        public async Task<IActionResult> Update([FromBody] UpdateCountryDto updateDto)
         {
-            var result = await _countryService.UpdateAsync(country);
+            var result = await _countryService.UpdateAsync(updateDto);
             if (!result.isSuccess)
                 return BadRequest(result);
 

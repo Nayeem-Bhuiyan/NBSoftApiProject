@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using SmartApp.Application.DTOs.MasterData.Country;
+using SmartApp.Domain.Entities.MasterData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +15,11 @@ namespace SmartApp.Application.ModelMapper
             public MappingConfig()
             {
 
-                #region MasterData
-
-               // CreateMap<Country, Vm_StudentInfo>()
-               //.ForMember(vm => vm.StudentInfoId, m => m.MapFrom(src => src.Id));
-               // CreateMap<Vm_StudentInfo, StudentInfo>();
-                #endregion
+                    #region MasterData
+                    CreateMap<Country, CountryDto>();
+                    CreateMap<CreateCountryDto, Country>();
+                    CreateMap<UpdateCountryDto, Country>();
+                    #endregion
             }
         }
     

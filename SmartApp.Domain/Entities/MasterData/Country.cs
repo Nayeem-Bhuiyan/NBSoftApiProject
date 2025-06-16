@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SmartApp.Domain.Entities.MasterData
 {
-    public class Country: BaseEntity
+    public class Country: BaseAuditEntity
     {
         public string Name { get; set; }
         public string Code { get; set; }

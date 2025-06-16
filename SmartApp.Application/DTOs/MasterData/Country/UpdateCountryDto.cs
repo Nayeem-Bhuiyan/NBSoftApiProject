@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartApp.Application.DTOs.Common
+namespace SmartApp.Application.DTOs.MasterData.Country
 {
-    public class VmDropdownInfo
+    public class UpdateCountryDto : CreateCountryDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public bool IsActive { get; set; }
     }
 }

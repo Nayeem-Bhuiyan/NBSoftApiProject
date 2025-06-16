@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmartApp.Domain\SmartApp.Domain.csproj" />
-    <ProjectReference Include="..\SmartApp.Shared\SmartApp.Shared.csproj" />
+    <Compile Remove="Interfaces\Services\**" />
+    <EmbeddedResource Remove="Interfaces\Services\**" />
+    <None Remove="Interfaces\Services\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\Services\" />
+    <ProjectReference Include="..\SmartApp.Domain\SmartApp.Domain.csproj" />
+    <ProjectReference Include="..\SmartApp.Shared\SmartApp.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

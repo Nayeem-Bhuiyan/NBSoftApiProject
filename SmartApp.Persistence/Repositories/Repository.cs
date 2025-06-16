@@ -119,11 +119,7 @@ namespace SmartApp.Persistence.Repositories
         }
 
 
-        public async Task<Response<PagedResult<T>>> GetPagedAsync(
-       Expression<Func<T, bool>>? filter,
-       int pageIndex,
-       int pageSize,
-       CancellationToken cancellationToken = default)
+        public async Task<Response<PagedResult<T>>> GetPagedAsync(Expression<Func<T, bool>>? filter,int pageIndex,int pageSize,CancellationToken cancellationToken = default)
         {
             try
             {
@@ -144,10 +140,10 @@ namespace SmartApp.Persistence.Repositories
 
                 var result = new PagedResult<T>
                 {
-                    Items = items,
-                    TotalCount = totalCount,
-                    PageIndex = pageIndex,
-                    PageSize = pageSize
+                    items = items,
+                    totalCount = totalCount,
+                    pageIndex = pageIndex,
+                    pageSize = pageSize
                 };
 
                 return Response<PagedResult<T>>.SuccessResponse(result, "Data loaded successfully");
