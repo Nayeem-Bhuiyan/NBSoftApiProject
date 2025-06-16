@@ -128,7 +128,7 @@ namespace SmartApp.Persistence.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SmartApp.Application.DTOs.Common.VmDropdownInfo", b =>
+            modelBuilder.Entity("SmartApp.Application.DTOs.Common.DropdownDto", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -301,6 +301,30 @@ namespace SmartApp.Persistence.Migrations
                     b.Property<string>("PhoneCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("createdBy")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime?>("createdDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("deletedBy")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime?>("deletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("isDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("updatedBy")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime?>("updatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.ToTable("Country");
@@ -314,7 +338,10 @@ namespace SmartApp.Persistence.Migrations
                             Currency = "Taka",
                             IsActive = true,
                             Name = "Bangladesh",
-                            PhoneCode = "+880"
+                            PhoneCode = "+880",
+                            createdBy = "System",
+                            createdDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            isDeleted = false
                         });
                 });
 

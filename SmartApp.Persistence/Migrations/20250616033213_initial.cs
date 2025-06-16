@@ -22,7 +22,14 @@ namespace SmartApp.Persistence.Migrations
                     Continent = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    createdBy = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
+                    createdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedBy = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    isDeleted = table.Column<bool>(type: "bit", nullable: true),
+                    deletedBy = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
+                    deletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -189,8 +196,8 @@ namespace SmartApp.Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Country",
-                columns: new[] { "Id", "Code", "Continent", "Currency", "IsActive", "Name", "PhoneCode" },
-                values: new object[] { 1, "", "Asia", "Taka", true, "Bangladesh", "+880" });
+                columns: new[] { "Id", "Code", "Continent", "Currency", "IsActive", "Name", "PhoneCode", "createdBy", "createdDate", "deletedBy", "deletedDate", "isDeleted", "updatedBy", "updatedDate" },
+                values: new object[] { 1, "", "Asia", "Taka", true, "Bangladesh", "+880", "System", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, false, null, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",

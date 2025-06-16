@@ -83,27 +83,7 @@ namespace SmartApp.Persistence.DBContext
 
             modelBuilder.Entity<DropdownDto>().HasNoKey().ToView("view_name_that_doesnt_exist");
 
-            #region SEED_DATA
-
-            #region MasterPanel
-
-            #region Country
-            modelBuilder.Entity<Country>().HasData(new List<Country>
-            {
-                new Country // 1
-                {
-                    Id=1,
-                    Name = "Bangladesh",
-                    Continent="Asia",
-                    Code="",
-                    PhoneCode="+880",
-                    Currency = "Taka"
-                }
-            });
-            #endregion
-
-            #endregion
-            #endregion
+            modelBuilder.SeedData();
 
         }
     }
