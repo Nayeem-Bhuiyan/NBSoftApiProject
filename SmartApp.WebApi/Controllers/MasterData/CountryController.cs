@@ -16,11 +16,20 @@ namespace SmartApp.API.Controllers.MasterData
             _countryService = countryService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetPaged([FromQuery] string? filter, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        {
+            var result = await _countryService.GetPagedAsync(filter, pageIndex, pageSize);
+            if (!result.isSuccess)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Country country)
         {
             var result = await _countryService.CreateAsync(country);
-            if (!result.Success)
+            if (!result.isSuccess)
                 return BadRequest(result);
 
             return Ok(result);
@@ -30,7 +39,7 @@ namespace SmartApp.API.Controllers.MasterData
         public async Task<IActionResult> Update([FromBody] Country country)
         {
             var result = await _countryService.UpdateAsync(country);
-            if (!result.Success)
+            if (!result.isSuccess)
                 return BadRequest(result);
 
             return Ok(result);
@@ -40,7 +49,7 @@ namespace SmartApp.API.Controllers.MasterData
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _countryService.DeleteAsync(id);
-            if (!result.Success)
+            if (!result.isSuccess)
                 return NotFound(result);
 
             return Ok(result);
@@ -50,18 +59,13 @@ namespace SmartApp.API.Controllers.MasterData
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _countryService.GetByIdAsync(id);
-            if (!result.Success)
+            if (!result.isSuccess)
                 return NotFound(result);
 
             return Ok(result);
         }
 
-        [HttpGet("paged")]
-        public async Task<IActionResult> GetPaged([FromQuery] string? filter, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
-        {
-            var result = await _countryService.GetPagedAsync(filter, pageIndex, pageSize);
-            return Ok(result);
-        }
+      
     }
 }
 

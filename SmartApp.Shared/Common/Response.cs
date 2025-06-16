@@ -8,14 +8,14 @@ namespace SmartApp.Shared.Common
 {
     public class Response<T>
     {
-        public bool Success { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public T Data { get; set; }
+        public bool isSuccess { get; set; }
+        public string message { get; set; } = string.Empty;
+        public T data { get; set; }
 
-        public static Response<T> SuccessResponse(T data, string message = "") =>
-            new Response<T> { Success = true, Message = message, Data = data };
+        public static Response<T> SuccessResponse(T _data, string _message = "") =>
+            new Response<T> { isSuccess = true, message = _message, data = _data };
 
-        public static Response<T> Failure(string message) =>
-            new Response<T> { Success = false, Message = message, Data = default };
+        public static Response<T> Failure(string _message) =>
+            new Response<T> { isSuccess = false, message = _message, data = default };
     }
 }

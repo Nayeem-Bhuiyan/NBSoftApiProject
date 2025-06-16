@@ -23,11 +23,11 @@ namespace SmartApp.Infrastructure.Services.MasterData
         public async Task<Response<Country>> CreateAsync(Country country)
         {
             var response = await _unitOfWork.Repository<Country>().AddAsync(country);
-            if (!response.Success) return response;
+            if (!response.isSuccess) return response;
 
             var saveResult = await _unitOfWork.SaveChangesAsync();
-            if (!saveResult.Success)
-                return Response<Country>.Failure(saveResult.Message);
+            if (!saveResult.isSuccess)
+                return Response<Country>.Failure(saveResult.message);
 
             return response;
         }
@@ -35,11 +35,11 @@ namespace SmartApp.Infrastructure.Services.MasterData
         public async Task<Response<Country>> UpdateAsync(Country country)
         {
             var response = await _unitOfWork.Repository<Country>().UpdateAsync(country);
-            if (!response.Success) return response;
+            if (!response.isSuccess) return response;
 
             var saveResult = await _unitOfWork.SaveChangesAsync();
-            if (!saveResult.Success)
-                return Response<Country>.Failure(saveResult.Message);
+            if (!saveResult.isSuccess)
+                return Response<Country>.Failure(saveResult.message);
 
             return response;
         }
@@ -47,11 +47,11 @@ namespace SmartApp.Infrastructure.Services.MasterData
         public async Task<Response<bool>> DeleteAsync(object id)
         {
             var response = await _unitOfWork.Repository<Country>().DeleteAsync(id);
-            if (!response.Success) return response;
+            if (!response.isSuccess) return response;
 
             var saveResult = await _unitOfWork.SaveChangesAsync();
-            if (!saveResult.Success)
-                return Response<bool>.Failure(saveResult.Message);
+            if (!saveResult.isSuccess)
+                return Response<bool>.Failure(saveResult.message);
 
             return response;
         }
