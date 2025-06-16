@@ -99,6 +99,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseMiddleware<SmartApp.WebApi.Middleware.GlobalExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
