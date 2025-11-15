@@ -17,3 +17,9 @@
 /SmartApp.WebApi/bin/Debug/net9.0
 /SmartApp.Persistence/bin/Debug/net9.0
 /SmartApp.Infrastructure/bin/Debug/net9.0
+/SmartApp.Application/bin/Debug/net10.0
+/SmartApp.Domain/bin/Debug/net10.0
+/SmartApp.Infrastructure/bin/Debug/net10.0
+/SmartApp.Persistence/bin/Debug/net10.0
+/SmartApp.Shared/bin/Debug/net10.0
+/SmartApp.WebApi/bin/Debug/net10.0
