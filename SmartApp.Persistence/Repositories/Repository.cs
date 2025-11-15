@@ -103,7 +103,7 @@ namespace SmartApp.Persistence.Repositories
             }
         }
 
-        public async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default)
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -114,12 +114,13 @@ namespace SmartApp.Persistence.Repositories
             }
             catch (Exception ex)
             {
+               Console.WriteLine("CountAsync error: " + ex.Message);
                 return -1;
             }
         }
 
 
-        public async Task<Response<PagedResult<T>>> GetPagedAsync(Expression<Func<T, bool>>? filter,int pageIndex,int pageSize,CancellationToken cancellationToken = default)
+        public async Task<Response<PagedResult<T>>> GetPagedAsync(Expression<Func<T, bool>> filter,int pageIndex,int pageSize,CancellationToken cancellationToken = default)
         {
             try
             {
@@ -154,7 +155,7 @@ namespace SmartApp.Persistence.Repositories
             }
         }
 
-        public async Task<Response<T>> SqlQuerySingleAsync(string sql,object[]? parameters = null,CancellationToken cancellationToken = default)
+        public async Task<Response<T>> SqlQuerySingleAsync(string sql,object[] parameters = null,CancellationToken cancellationToken = default)
         {
             try
             {
@@ -175,7 +176,7 @@ namespace SmartApp.Persistence.Repositories
         }
 
 
-        public async Task<Response<IEnumerable<T>>> SqlQueryListAsync(string sql, object[]? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<Response<IEnumerable<T>>> SqlQueryListAsync(string sql, object[] parameters = null, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -193,7 +194,7 @@ namespace SmartApp.Persistence.Repositories
         }
 
 
-        public async Task<Response<int>> ExecuteSqlCommandAsync(string sql, object[]? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<Response<int>> ExecuteSqlCommandAsync(string sql, object[] parameters = null, CancellationToken cancellationToken = default)
         {
             try
             {

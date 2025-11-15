@@ -1,14 +1,19 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using SmartApp.Application.DTOs.Common;
 using SmartApp.Application.ModelMapper;
 using SmartApp.Domain.Entities.Auth;
 using SmartApp.Infrastructure;
 using SmartApp.Persistence;
 using SmartApp.Persistence.DBContext;
-using System;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
+using AutoMapper;
+      // ✅ For OpenApi types
+
+
 
 var options = new WebApplicationOptions
 {
@@ -25,10 +30,11 @@ builder.Logging.AddDebug();
 // Add services to the container
 builder.Services.AddControllers();
 
-builder.Services.AddAutoMapper(typeof(MappingConfig));
+
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingConfig>());
 
 // Register custom services
-builder.Services.AddPersistenceDI(builder.Configuration);
+builder.Services.AddPersistenceDI(builder.Configuration);   
 builder.Services.AddInfrastructureDI();
 
 //builder.Services.AddHttpContextAccessor();
@@ -79,42 +85,31 @@ builder.Services.AddAuthorization();
 #endregion
 
 #region Swagger_Config_1
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddSwaggerGen(c =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "SmartApp API",
         Version = "v1",
-        Description = "API documentation for SmartApp Web API",
-        Contact = new()
-        {
-            Name = "Nayeem Bhuiyan",
-            Email = "nayeem.datasoft2022@gmail.com",
-        }
+        Description = "API documentation"
     });
 
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Enter JWT token like: Bearer {your token}",
+        Description = "JWT Authorization header using the Bearer scheme.",
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
 
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+    //c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+
+
 #endregion
 
 
@@ -122,14 +117,12 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    #region Swagger_Config_2
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartApp API V1");
         options.RoutePrefix = "swagger";
     });
-    #endregion
 }
 
 app.UseHttpsRedirection();
@@ -140,3 +133,35 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
+
+
+#region Helper_Filter
+//public class SecurityRequirementsOperationFilter : IOperationFilter
+//{
+//    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+//    {
+//        if (operation.Security == null)
+//            operation.Security = new List<OpenApiSecurityRequirement>();
+
+//        var securityRequirement = new OpenApiSecurityRequirement
+//        {
+//            {
+//                new OpenApiSecurityScheme
+//                {
+//                    Reference = new OpenApiReference
+//                    {
+//                        Type = ReferenceType.SecurityScheme,
+//                        Id = "Bearer"
+//                    },
+//                    Scheme = "Bearer",
+//                    Name = "Authorization",
+//                    In = ParameterLocation.Header
+//                },
+//                new List<string>()
+//            }
+//        };
+
+//        operation.Security.Add(securityRequirement);
+//    }
+//}
+#endregion

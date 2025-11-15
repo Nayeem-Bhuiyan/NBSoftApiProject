@@ -73,9 +73,9 @@ namespace SmartApp.Infrastructure.Services.MasterData
         }
 
 
-        public async Task<Response<PagedResult<CountryDto>>> GetPagedAsync(string? filter, int pageIndex, int pageSize)
+        public async Task<Response<PagedResult<CountryDto>>> GetPagedAsync(string filter, int pageIndex, int pageSize)
         {
-            Expression<Func<Country, bool>>? predicate = null;
+            Expression<Func<Country, bool>> predicate = null;
 
             if (!string.IsNullOrWhiteSpace(filter))
                 predicate = c => c.Name.Contains(filter);

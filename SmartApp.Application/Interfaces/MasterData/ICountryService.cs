@@ -15,6 +15,6 @@ namespace SmartApp.Application.Interfaces.MasterData
         Task<Response<Country>> UpdateAsync(UpdateCountryDto countryDto);
         Task<Response<bool>> DeleteAsync(object id);
         Task<Response<CountryDto>> GetByIdAsync(object id);
-        Task<Response<PagedResult<CountryDto>>> GetPagedAsync(string? filter, int pageIndex, int pageSize);
+        Task<Response<PagedResult<CountryDto>>> GetPagedAsync(string filter, int pageIndex, int pageSize);
     }
 }
