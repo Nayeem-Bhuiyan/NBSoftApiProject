@@ -1,19 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿// Program.cs - No seeding, only migrations
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using SmartApp.Application.DTOs.Common;
 using SmartApp.Application.ModelMapper;
 using SmartApp.Domain.Entities.Auth;
+using SmartApp.Domain.Entities.MasterData;
 using SmartApp.Infrastructure;
 using SmartApp.Persistence;
 using SmartApp.Persistence.DBContext;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
-using AutoMapper;
-      // ✅ For OpenApi types
-
-
 
 var options = new WebApplicationOptions
 {
@@ -21,27 +20,19 @@ var options = new WebApplicationOptions
     WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")
 };
 
-var builder = WebApplication.CreateBuilder(options);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddJsonConsole();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-// Add services to the container
 builder.Services.AddControllers();
-
-
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingConfig>());
-
-// Register custom services
-builder.Services.AddPersistenceDI(builder.Configuration);   
+builder.Services.AddPersistenceDI(builder.Configuration);
 builder.Services.AddInfrastructureDI();
-
-//builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<FileImageSettings>(builder.Configuration.GetSection("FileImageSettings"));
 
-// Identity options config
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = false;
@@ -50,7 +41,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
     options.User.RequireUniqueEmail = true;
-
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
     options.Lockout.MaxFailedAccessAttempts = 5;
 });
@@ -59,33 +49,27 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-#region Jwt_config
 builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
 
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(key)
-        };
-    });
 builder.Services.AddAuthorization();
-
-#endregion
-
-#region Swagger_Config_1
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -95,7 +79,6 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = "API documentation"
     });
-
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme.",
@@ -105,15 +88,29 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT"
     });
-
-    //c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-
-#endregion
-
-
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+
+        context.Database.Migrate();
+        Console.WriteLine("✅ Database migrations applied successfully!");
+
+        var countryCount = context.Country.Count();
+        Console.WriteLine($"ℹ️ Existing country records: {countryCount}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Migration Error: {ex.Message}");
+        Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -130,38 +127,5 @@ app.UseRouting();
 app.UseMiddleware<SmartApp.WebApi.Middleware.GlobalExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 app.Run();
-
-
-#region Helper_Filter
-//public class SecurityRequirementsOperationFilter : IOperationFilter
-//{
-//    public void Apply(OpenApiOperation operation, OperationFilterContext context)
-//    {
-//        if (operation.Security == null)
-//            operation.Security = new List<OpenApiSecurityRequirement>();
-
-//        var securityRequirement = new OpenApiSecurityRequirement
-//        {
-//            {
-//                new OpenApiSecurityScheme
-//                {
-//                    Reference = new OpenApiReference
-//                    {
-//                        Type = ReferenceType.SecurityScheme,
-//                        Id = "Bearer"
-//                    },
-//                    Scheme = "Bearer",
-//                    Name = "Authorization",
-//                    In = ParameterLocation.Header
-//                },
-//                new List<string>()
-//            }
-//        };
-
-//        operation.Security.Add(securityRequirement);
-//    }
-//}
-#endregion

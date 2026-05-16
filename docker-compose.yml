@@ -1,0 +1,49 @@
+# docker-compose.yml
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: smartapp-sqlserver
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "NayeemDev2026@Secure#Pass01"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    networks:
+      - smartapp-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'NayeemDev2026@Secure#Pass01' -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+
+  smartapp-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartapp-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__AppDbConnection: "Server=sqlserver;Database=NBSoftApiDB;User Id=AppUser;Password=App@User123!;TrustServerCertificate=True;MultipleActiveResultSets=true;"
+      Jwt__Key: "dfjgsdjkfbsjkdhfjsdrhewdfjg_djhfjdhf_22323df4!"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    volumes:
+      - ./SmartApp.WebApi/wwwroot:/app/wwwroot
+    networks:
+      - smartapp-network
+
+networks:
+  smartapp-network:
+    driver: bridge
+
+volumes:
+  mssql-data:
