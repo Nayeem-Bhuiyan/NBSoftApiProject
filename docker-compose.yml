@@ -1,4 +1,3 @@
-# docker-compose.yml
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -31,8 +30,10 @@ services:
       - "8080:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__AppDbConnection: "Server=sqlserver;Database=NBSoftApiDB;User Id=AppUser;Password=App@User123!;TrustServerCertificate=True;MultipleActiveResultSets=true;"
+      ConnectionStrings__AppDbConnection: "Server=sqlserver;Database=NBSoftApiDB;User Id=sa;Password=NayeemDev2026@Secure#Pass01;TrustServerCertificate=True;MultipleActiveResultSets=true;"
       Jwt__Key: "dfjgsdjkfbsjkdhfjsdrhewdfjg_djhfjdhf_22323df4!"
+      Jwt__Issuer: "SmartApp"
+      Jwt__Audience: "SmartAppUsers"
     depends_on:
       sqlserver:
         condition: service_healthy

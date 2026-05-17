@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SmartApp.Application.DTOs.MasterData.Country;
 using SmartApp.Application.Interfaces.MasterData;
 using SmartApp.Domain.Entities.MasterData;
@@ -17,6 +18,7 @@ namespace SmartApp.API.Controllers.MasterData
             _countryService = countryService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetPaged([FromQuery] string filter, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
@@ -25,7 +27,7 @@ namespace SmartApp.API.Controllers.MasterData
                 return BadRequest(result);
             return Ok(result);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCountryDto createDto)
         {
@@ -35,7 +37,7 @@ namespace SmartApp.API.Controllers.MasterData
 
             return Ok(result);
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateCountryDto updateDto)
         {
@@ -45,7 +47,7 @@ namespace SmartApp.API.Controllers.MasterData
 
             return Ok(result);
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -8,20 +8,30 @@ ELSE
     PRINT 'Database NBSoftApiDB already exists.';
 GO
 
-USE [NBSoftApiDB];  -- ← FIXED: Changed from NBSoftÄpiDB
+USE [NBSoftApiDB];
 GO
 
--- Create Login and User
+-- Create Login
 IF NOT EXISTS (SELECT * FROM sys.sql_logins WHERE name = 'AppUser')
 BEGIN
-    CREATE LOGIN [AppUser] WITH PASSWORD = 'App@User123!', 
-        CHECK_EXPIRATION=OFF, 
-        CHECK_POLICY=OFF;
-    
+    CREATE LOGIN [AppUser] WITH PASSWORD = 'App@User123!',
+        CHECK_EXPIRATION = OFF,
+        CHECK_POLICY = OFF;
+    PRINT 'Login AppUser created.';
+END
+ELSE
+    PRINT 'Login AppUser already exists.';
+GO
+
+USE [NBSoftApiDB];
+GO
+
+-- Create User and assign role
+IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = 'AppUser')
+BEGIN
     CREATE USER [AppUser] FOR LOGIN [AppUser];
     ALTER ROLE [db_owner] ADD MEMBER [AppUser];
-    
-    PRINT 'User AppUser created and granted db_owner permission.';
+    PRINT 'User AppUser created and granted db_owner.';
 END
 ELSE
     PRINT 'User AppUser already exists.';

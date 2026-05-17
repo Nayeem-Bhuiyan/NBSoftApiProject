@@ -43,11 +43,45 @@ namespace SmartApp.WebApi.Middleware
             try
             {
                 await _next(context);
+
+                if (!context.Response.HasStarted)
+                    await HandleStatusCodeAsync(context);
             }
             catch (Exception ex)
             {
                 await HandleExceptionAsync(context, ex);
             }
+        }
+
+        private async Task HandleStatusCodeAsync(HttpContext context)
+        {
+            var message = context.Response.StatusCode switch
+            {
+                (int)HttpStatusCode.Unauthorized => "Authentication required. Please provide a valid token.",
+                (int)HttpStatusCode.Forbidden => "You do not have permission to access this resource.",
+                _ => null
+            };
+
+            if (message is null) return;
+
+            context.Response.ContentType = "application/json";
+
+            var traceId = context.TraceIdentifier;
+
+            var response = new Response<object>
+            {
+                isSuccess = false,
+                message   = $"{message} (Trace ID: {traceId})",
+                data      = null
+            };
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented        = _env.IsDevelopment()
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response, jsonOptions));
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
