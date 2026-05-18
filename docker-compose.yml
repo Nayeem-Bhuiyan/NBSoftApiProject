@@ -20,6 +20,21 @@ services:
       retries: 20
       start_period: 30s
 
+  redis:
+    image: redis:7-alpine
+    container_name: smartapp-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - smartapp-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   smartapp-api:
     build:
       context: .
@@ -30,15 +45,23 @@ services:
       - "8080:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__AppDbConnection: "Server=sqlserver;Database=NBSoftApiDB;User Id=sa;Password=NayeemDev2026@Secure#Pass01;TrustServerCertificate=True;MultipleActiveResultSets=true;"
+      ConnectionStrings__Redis: "redis:6379"
       Jwt__Key: "dfjgsdjkfbsjkdhfjsdrhewdfjg_djhfjdhf_22323df4!"
       Jwt__Issuer: "SmartApp"
       Jwt__Audience: "SmartAppUsers"
+      Jwt__AccessTokenExpirationMinutes: "60"
+      Jwt__AllowInsecureHttp: "true"
+      Cors__AllowedOrigins__0: "http://localhost:4200"
+      Cors__AllowedOrigins__1: "http://localhost:8080"
     depends_on:
       sqlserver:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
-      - ./SmartApp.WebApi/wwwroot:/app/wwwroot
+      - ./uploads/wwwroot:/app/wwwroot  # ← bind mount, host path auto-created by Docker
     networks:
       - smartapp-network
 
@@ -47,4 +70,4 @@ networks:
     driver: bridge
 
 volumes:
-  mssql-data:
+  mssql-data:  # ← only SQL Server needs named volume now

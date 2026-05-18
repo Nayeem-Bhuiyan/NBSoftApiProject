@@ -12,8 +12,8 @@ using SmartApp.Persistence.DBContext;
 namespace SmartApp.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260518011321_add_tbl_rolepermission")]
-    partial class _20260518011321_add_tbl_rolepermission
+    [Migration("20260518024500_Initial")]
+    partial class _20260518024500_Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -388,21 +388,6 @@ namespace SmartApp.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Country");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Code = "",
-                            Continent = "Asia",
-                            Currency = "Taka",
-                            IsActive = true,
-                            Name = "Bangladesh",
-                            PhoneCode = "+880",
-                            createdBy = "System",
-                            createdDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            isDeleted = false
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

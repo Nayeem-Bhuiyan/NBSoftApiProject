@@ -1,5 +1,4 @@
-﻿// Extensions/OpenApiExtensions.cs
-using Microsoft.AspNetCore.OpenApi;
+﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
 

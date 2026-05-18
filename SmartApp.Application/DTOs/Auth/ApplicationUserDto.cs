@@ -16,5 +16,6 @@ namespace SmartApp.Application.DTOs.Auth
         {
             get { return FirstName + " " + LastName; }
         }
+        public List<string> Roles { get; set; } = new();
     }
 }

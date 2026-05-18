@@ -1,5 +1,4 @@
-﻿// Extensions/JwtExtensions.cs
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -34,9 +33,9 @@ public static class JwtExtensions
                 IssuerSigningKey = new SymmetricSecurityKey(key),
 
                 // Recommended security settings
-                ClockSkew = TimeSpan.FromSeconds(30), // Reduced from default 5 minutes
+                ClockSkew = TimeSpan.FromSeconds(30),
                 RequireExpirationTime = true,
-                ValidateTokenReplay = false, // Set to true for high-security scenarios
+                ValidateTokenReplay = false, 
                 NameClaimType = "name",
                 RoleClaimType = "role"
             };

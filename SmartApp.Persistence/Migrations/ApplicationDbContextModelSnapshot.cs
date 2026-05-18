@@ -16,7 +16,7 @@ namespace SmartApp.Persistence.Migrations
         // If you encounter a merge conflict in the line below, it means you need to
         // discard one of the migration branches and recreate its migrations on top of
         // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-        public override string LatestMigrationId => "20260518011321_add_tbl_rolepermission";
+        public override string LatestMigrationId => "20260518024500_Initial";
 
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -390,21 +390,6 @@ namespace SmartApp.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Country");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Code = "",
-                            Continent = "Asia",
-                            Currency = "Taka",
-                            IsActive = true,
-                            Name = "Bangladesh",
-                            PhoneCode = "+880",
-                            createdBy = "System",
-                            createdDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            isDeleted = false
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

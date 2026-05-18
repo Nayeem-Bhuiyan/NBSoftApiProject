@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SmartApp.Application.Interfaces.Auth;
 using SmartApp.Domain.Entities.Auth;
+using SmartApp.Infrastructure.Seeds;
 using SmartApp.Persistence.DBContext;
 using SmartApp.WebApi.Authorization;
-using SmartApp.WebApi.Data;   // Adjust if your DbContext namespace is different
 
 namespace SmartApp.WebApi.Extensions;
 
@@ -18,17 +18,11 @@ public static class MigrationExtensions
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
         var permissionService = scope.ServiceProvider.GetRequiredService<IPermissionService>();
-
-        // ← REMOVE: seedScope is redundant — reuse the same scope above
-        // using var seedScope = app.Services.CreateScope(); 
-
         try
         {
             await context.Database.MigrateAsync();
 
             await RoleSeeder.SeedAsync(roleManager);
-
-            // ← PermissionDiscoveryService stays in WebApi — correct
             var discovered = PermissionDiscoveryService.Discover(typeof(Program).Assembly);
             await permissionService.SeedPermissionsAsync(discovered);
 

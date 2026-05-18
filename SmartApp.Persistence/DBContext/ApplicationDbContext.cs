@@ -114,8 +114,6 @@ namespace SmartApp.Persistence.DBContext
 
             modelBuilder.Entity<DropdownDto>().HasNoKey().ToView("view_name_that_doesnt_exist");
 
-            modelBuilder.SeedData();
-
         }
     }
 }

@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SmartApp.Application.DTOs.Auth;
 using SmartApp.Application.Interfaces.Auth;
-using SmartApp.Domain.Entities.Auth;  // Your ApplicationUser class namespace
+using SmartApp.Domain.Entities.Auth; 
 using SmartApp.Domain.Entities.MasterData;
-using SmartApp.Shared.Common;          // Response<T> class namespace
+using SmartApp.Shared.Common;
+using StackExchange.Redis;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
@@ -70,12 +71,14 @@ namespace SmartApp.WebApi.Controllers.Auth
 
             var token = await _tokenService.GenerateTokenAsync(user);
 
-            var userDto =_mapper.Map<ApplicationUserDto>(user);
+            var userDto = _mapper.Map<ApplicationUserDto>(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            userDto.Roles     = roles.ToList(); 
 
             var response = new LoginResponseDto
             {
                 Token = token,
-                User = userDto
+                User  = userDto
             };
 
             return Ok(Response<LoginResponseDto>.SuccessResponse(response, "Login successful."));
