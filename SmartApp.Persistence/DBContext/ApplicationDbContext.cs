@@ -26,6 +26,11 @@ namespace SmartApp.Persistence.DBContext
         public DbSet<DropdownDto> VmDropdownInfo { get; set; } = null;
         #endregion
 
+        #region Auth
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
+        #endregion
+
         // Auto change tracker for audit fields
         public override int SaveChanges()
         {
@@ -79,6 +84,32 @@ namespace SmartApp.Persistence.DBContext
             modelBuilder.Entity<IdentityUserLogin<string>>(entity => { entity.ToTable("UserLogins"); });
             modelBuilder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable("UserTokens"); });
             modelBuilder.Entity<IdentityRoleClaim<string>>(entity => { entity.ToTable("RoleClaims"); });
+            #endregion
+
+            #region Role_Permission_Mapping
+            modelBuilder.Entity<RolePermission>(entity =>
+            {
+                entity.ToTable("RolePermissions");
+                entity.HasKey(rp => rp.Id);
+
+                entity.HasIndex(rp => new { rp.RoleId, rp.PermissionId }).IsUnique();
+
+                entity.HasOne(rp => rp.Role)
+                      .WithMany()
+                      .HasForeignKey(rp => rp.RoleId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(rp => rp.Permission)
+                      .WithMany(p => p.RolePermissions)
+                      .HasForeignKey(rp => rp.PermissionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<Permission>(entity =>
+            {
+                entity.ToTable("Permissions");
+                entity.HasKey(p => p.Id);
+                entity.HasIndex(p => new { p.Controller, p.Action, p.HttpMethod }).IsUnique();
+            });
             #endregion
 
             modelBuilder.Entity<DropdownDto>().HasNoKey().ToView("view_name_that_doesnt_exist");

@@ -17,13 +17,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="11.0.0-preview.4.*"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.0.0-preview.4.*"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.4.*"/>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="11.0.0-preview.4.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.0.0-preview.4.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.4.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.4.*">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.4.26230.115">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="11.0.0-preview.4.26230.115" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="11.0.0-preview.4.26230.115" />
   </ItemGroup>
 
 </Project>

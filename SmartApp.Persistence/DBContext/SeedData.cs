@@ -29,7 +29,6 @@ namespace SmartApp.Persistence.DBContext
             });
         }
 
-        // Add more as needed
 
     }
 }

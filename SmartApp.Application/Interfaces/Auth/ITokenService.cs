@@ -9,6 +9,6 @@ namespace SmartApp.Application.Interfaces.Auth
 {
     public interface ITokenService
     {
-        string GenerateToken(ApplicationUser user);
+        Task<string> GenerateTokenAsync(ApplicationUser user);
     }
 }

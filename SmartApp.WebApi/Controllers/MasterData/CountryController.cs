@@ -18,7 +18,7 @@ namespace SmartApp.API.Controllers.MasterData
             _countryService = countryService;
         }
 
-        [Authorize]
+        [Authorize(Policy = "DynamicPermission")]
         [HttpGet]
         public async Task<IActionResult> GetPaged([FromQuery] string filter, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
@@ -27,7 +27,7 @@ namespace SmartApp.API.Controllers.MasterData
                 return BadRequest(result);
             return Ok(result);
         }
-        [Authorize]
+        [Authorize(Policy = "DynamicPermission")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCountryDto createDto)
         {
@@ -37,7 +37,7 @@ namespace SmartApp.API.Controllers.MasterData
 
             return Ok(result);
         }
-        [Authorize]
+        [Authorize(Policy = "DynamicPermission")]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateCountryDto updateDto)
         {
@@ -47,7 +47,7 @@ namespace SmartApp.API.Controllers.MasterData
 
             return Ok(result);
         }
-        [Authorize]
+        [Authorize(Policy = "DynamicPermission")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

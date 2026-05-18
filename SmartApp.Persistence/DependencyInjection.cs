@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SmartApp.Application.Interfaces.Auth;
 using SmartApp.Application.Interfaces.Repositories;
 using SmartApp.Persistence.DBContext;
+using SmartApp.Persistence.EntityRepositories.PermissionRepo;
 using SmartApp.Persistence.Repositories;
 
 namespace SmartApp.Persistence
@@ -27,6 +29,7 @@ namespace SmartApp.Persistence
                 )
             );
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }

@@ -48,6 +48,8 @@ namespace SmartApp.WebApi.Controllers.Auth
 
             if (!result.Succeeded)
                 return BadRequest(Response<string>.Failure(string.Join("; ", result.Errors.Select(e => e.Description))));
+            var role = string.IsNullOrWhiteSpace(model.Role) ? "User" : model.Role;
+            await _userManager.AddToRoleAsync(createObj, role);
 
             return Ok(Response<ApplicationUser>.SuccessResponse(createObj, "User registered successfully."));
         }
@@ -66,7 +68,7 @@ namespace SmartApp.WebApi.Controllers.Auth
             if (!result.Succeeded)
                 return Unauthorized(Response<string>.Failure("Invalid username or password."));
 
-            var token = _tokenService.GenerateToken(user);
+            var token = await _tokenService.GenerateTokenAsync(user);
 
             var userDto =_mapper.Map<ApplicationUserDto>(user);
 

@@ -31,6 +31,8 @@ namespace SmartApp.Application.DTOs.Auth
         [Required]
         [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
+        [StringLength(50)]
+        public string Role { get; set; } = "User";
     }
 
 }
