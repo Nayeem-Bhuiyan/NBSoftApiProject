@@ -14,5 +14,8 @@ namespace SmartApp.Application.DTOs.Auth
 
         [Required]
         public string Password { get; set; }
+
+        [Required]
+        public string DeviceId { get; set; } 
     }
 }
