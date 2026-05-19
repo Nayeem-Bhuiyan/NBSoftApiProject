@@ -120,34 +120,60 @@ namespace SmartApp.Persistence.Repositories
         }
 
 
-        public async Task<Response<PagedResult<T>>> GetPagedAsync(Expression<Func<T, bool>> filter,int pageIndex,int pageSize,CancellationToken cancellationToken = default)
+        public async Task<Response<PagedResult<T>>> GetPagedAsync(
+     Expression<Func<T, bool>> filter,
+     int pageIndex,
+     int pageSize,
+     string sortBy = null,
+     bool sortDesc = false,
+     CancellationToken cancellationToken = default)
         {
             try
             {
                 if (pageIndex < 1) pageIndex = 1;
-                if (pageSize < 1) pageSize = 10;
+                if (pageSize  < 1) pageSize  = 10;
 
                 IQueryable<T> query = _dbSet.AsNoTracking();
 
-                if (filter != null)
+                if (filter is not null)
                     query = query.Where(filter);
 
-                var totalCount = await query.CountAsync(cancellationToken);
+                // ← dynamic sorting via EF
+                if (!string.IsNullOrWhiteSpace(sortBy))
+                {
+                    var property = typeof(T).GetProperty(sortBy,
+                        System.Reflection.BindingFlags.IgnoreCase |
+                        System.Reflection.BindingFlags.Public     |
+                        System.Reflection.BindingFlags.Instance);
 
+                    if (property is not null)
+                    {
+                        var param = Expression.Parameter(typeof(T), "x");
+                        var propAccess = Expression.Property(param, property);
+                        var lambda = Expression.Lambda(propAccess, param);
+
+                        var methodName = sortDesc ? "OrderByDescending" : "OrderBy";
+                        var method = typeof(Queryable).GetMethods()
+                            .First(m => m.Name == methodName && m.GetParameters().Length == 2)
+                            .MakeGenericMethod(typeof(T), property.PropertyType);
+
+                        query = (IQueryable<T>)method.Invoke(null, [query, lambda])!;
+                    }
+                }
+
+                var totalCount = await query.CountAsync(cancellationToken);
                 var items = await query
                     .Skip((pageIndex - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync(cancellationToken);
 
-                var result = new PagedResult<T>
+                return Response<PagedResult<T>>.SuccessResponse(new PagedResult<T>
                 {
-                    items = items,
+                    items      = items,
                     totalCount = totalCount,
-                    pageIndex = pageIndex,
-                    pageSize = pageSize
-                };
-
-                return Response<PagedResult<T>>.SuccessResponse(result, "Data loaded successfully");
+                    pageIndex  = pageIndex,
+                    pageSize   = pageSize
+                }, "Data loaded successfully");
             }
             catch (Exception ex)
             {

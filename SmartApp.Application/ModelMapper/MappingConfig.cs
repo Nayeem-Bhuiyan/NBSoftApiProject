@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using SmartApp.Application.DTOs.Auth;
 using SmartApp.Application.DTOs.MasterData.Country;
+using SmartApp.Application.Features.MasterData.Countries.Commands.CreateCountry;
+using SmartApp.Application.Features.MasterData.Countries.Commands.UpdateCountry;
 using SmartApp.Domain.Entities.Auth;
 using SmartApp.Domain.Entities.MasterData;
 using System;
@@ -17,14 +19,14 @@ namespace SmartApp.Application.ModelMapper
             public MappingConfig()
             {
 
-                    #region MasterData
-                    CreateMap<Country, CountryDto>().ReverseMap();
-                    CreateMap<CreateCountryDto, Country>();
-                    CreateMap<UpdateCountryDto, Country>();
-                    #endregion
+            #region MasterData
+            CreateMap<CreateCountryCommand, Country>();
+            CreateMap<UpdateCountryCommand, Country>();
+            CreateMap<Country, CountryDto>();
+            #endregion
 
-                    #region Auth
-                    CreateMap<ApplicationUser, RegisterDto>().ReverseMap();
+            #region Auth
+            CreateMap<ApplicationUser, RegisterDto>().ReverseMap();
                     CreateMap<ApplicationUser, ApplicationUserDto>().ReverseMap();
 
             #endregion

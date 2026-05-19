@@ -1,74 +1,68 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SmartApp.Application.DTOs.MasterData.Country;
-using SmartApp.Application.Interfaces.MasterData;
-using SmartApp.Domain.Entities.MasterData;
-using SmartApp.Shared.Common;
+using SmartApp.Application.Features.MasterData.Countries.Commands.CreateCountry;
+using SmartApp.Application.Features.MasterData.Countries.Commands.DeleteCountry;
+using SmartApp.Application.Features.MasterData.Countries.Commands.UpdateCountry;
+using SmartApp.Application.Features.MasterData.Countries.Queries.GetCountriesPaged;
+using SmartApp.Application.Features.MasterData.Countries.Queries.GetCountryById;
 
-namespace SmartApp.API.Controllers.MasterData
+namespace SmartApp.WebApi.Controllers.MasterData;
+
+[ApiController]
+[Route("api/[controller]")]
+public class CountryController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CountryController : ControllerBase
+    private readonly ISender _sender;
+
+    public CountryController(ISender sender)
     {
-        private readonly ICountryService _countryService;
+        _sender = sender;
+    }
 
-        public CountryController(ICountryService countryService)
-        {
-            _countryService = countryService;
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetPaged(
+        [FromQuery] string filter,
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string sortBy = null,
+        [FromQuery] bool sortDesc = false,
+        CancellationToken ct = default)
+    {
+        var result = await _sender.Send(
+            new GetCountriesPagedQuery(filter, pageIndex, pageSize, sortBy, sortDesc), ct);
 
-        [Authorize(Policy = "DynamicPermission")]
-        [HttpGet]
-        public async Task<IActionResult> GetPaged([FromQuery] string filter, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
-        {
-            var result = await _countryService.GetPagedAsync(filter, pageIndex, pageSize);
-            if (!result.isSuccess)
-                return BadRequest(result);
-            return Ok(result);
-        }
-        [Authorize(Policy = "DynamicPermission")]
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateCountryDto createDto)
-        {
-            var result = await _countryService.CreateAsync(createDto);
-            if (!result.isSuccess)
-                return BadRequest(result);
+        return result.isSuccess ? Ok(result) : BadRequest(result);
+    }
 
-            return Ok(result);
-        }
-        [Authorize(Policy = "DynamicPermission")]
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateCountryDto updateDto)
-        {
-            var result = await _countryService.UpdateAsync(updateDto);
-            if (!result.isSuccess)
-                return BadRequest(result);
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken ct = default)
+    {
+        var result = await _sender.Send(new GetCountryByIdQuery(id), ct);
+        return result.isSuccess ? Ok(result) : NotFound(result);
+    }
 
-            return Ok(result);
-        }
-        [Authorize(Policy = "DynamicPermission")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var result = await _countryService.DeleteAsync(id);
-            if (!result.isSuccess)
-                return NotFound(result);
+    [Authorize(Policy = "DynamicPermission")]
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateCountryCommand command, CancellationToken ct = default)
+    {
+        var result = await _sender.Send(command, ct);
+        return result.isSuccess ? Ok(result) : BadRequest(result);
+    }
 
-            return Ok(result);
-        }
+    [Authorize(Policy = "DynamicPermission")]
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] UpdateCountryCommand command, CancellationToken ct = default)
+    {
+        var result = await _sender.Send(command, ct);
+        return result.isSuccess ? Ok(result) : BadRequest(result);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var result = await _countryService.GetByIdAsync(id);
-            if (!result.isSuccess)
-                return NotFound(result);
-
-            return Ok(result);
-        }
-
-      
+    [Authorize(Policy = "DynamicPermission")]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken ct = default)
+    {
+        var result = await _sender.Send(new DeleteCountryCommand(id), ct);
+        return result.isSuccess ? Ok(result) : BadRequest(result);
     }
 }
-

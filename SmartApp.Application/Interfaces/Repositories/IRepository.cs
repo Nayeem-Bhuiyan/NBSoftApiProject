@@ -19,11 +19,12 @@ namespace SmartApp.Application.Interfaces.Repositories
         Task<Response<bool>> DeleteAsync(object id, CancellationToken cancellationToken = default);
         Task<int> CountAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
         Task<Response<PagedResult<T>>> GetPagedAsync(
-            Expression<Func<T, bool>> filter,
-            int pageIndex,
-            int pageSize,
-            CancellationToken cancellationToken = default
-        );
+         Expression<Func<T, bool>> filter,
+         int pageIndex,
+         int pageSize,
+         string sortBy = null,
+         bool sortDesc = false,
+         CancellationToken cancellationToken = default);
         Task<Response<T>> SqlQuerySingleAsync(string sql, object[] parameters = null, CancellationToken cancellationToken = default);
         Task<Response<IEnumerable<T>>> SqlQueryListAsync(
             string sql,

@@ -1,0 +1,4 @@
+Directory:project root folder(where contain project.sln file)
+terminal:run powershell terminal
+command1: .\cqrs_file_helper\loader.ps1
+command2:New-CqrsFeature Country MasterData

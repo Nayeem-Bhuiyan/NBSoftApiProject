@@ -19,33 +19,6 @@ namespace SmartApp.Infrastructure.Services.Auth
             _userManager  = userManager;
         }
 
-        //public string GenerateToken(ApplicationUser user)
-        //{
-        //    var claims = new List<Claim>
-        //{
-        //    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-        //    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        //    new Claim(ClaimTypes.NameIdentifier, user.Id)
-        //    // add more claims as needed
-        //};
-
-        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-        //    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        //    var expires = DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpireMinutes"]));
-
-        //    var token = new JwtSecurityToken(
-        //        issuer: _config["Jwt:Issuer"],
-        //        audience: _config["Jwt:Audience"],
-        //        claims: claims,
-        //        expires: expires,
-        //        signingCredentials: creds
-        //    );
-
-        //    return new JwtSecurityTokenHandler().WriteToken(token);
-        //}
-
-
         public async Task<string> GenerateTokenAsync(ApplicationUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
@@ -54,8 +27,8 @@ namespace SmartApp.Infrastructure.Services.Auth
 
             var claims = new List<Claim>
                             {
-                                new(JwtRegisteredClaimNames.Sub, user.UserName),
-                                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                                new(JwtRegisteredClaimNames.Sub, user.Id), 
+                                new(JwtRegisteredClaimNames.Name, user.UserName), 
                                 new(ClaimTypes.NameIdentifier, user.Id),
                             };
             claims.AddRange(roleClaims);

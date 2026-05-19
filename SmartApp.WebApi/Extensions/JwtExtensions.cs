@@ -1,6 +1,7 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
 
 namespace SmartApp.WebApi.Extensions;
 
@@ -35,9 +36,11 @@ public static class JwtExtensions
                 // Recommended security settings
                 ClockSkew = TimeSpan.FromSeconds(30),
                 RequireExpirationTime = true,
-                ValidateTokenReplay = false, 
-                NameClaimType = "name",
-                RoleClaimType = "role"
+                ValidateTokenReplay = false,
+                //NameClaimType = "name",
+                //RoleClaimType = "role"
+                RoleClaimType = ClaimTypes.Role, 
+                NameClaimType = ClaimTypes.NameIdentifier,  
             };
 
             // Handle token extraction from multiple sources

@@ -55,13 +55,26 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         var action = routeData.Values["action"]?.ToString()     ?? string.Empty;
         var httpMethod = httpContext.Request.Method;
 
+        //temp code check role
+        // ← ADD temporary debug
+        //Console.WriteLine($">>> UserId: {userId}");
+        //Console.WriteLine($">>> Roles: {string.Join(", ", roleNames)}");
+        //Console.WriteLine($">>> Controller: {controller}");
+        //Console.WriteLine($">>> Action: {action}");
+        //Console.WriteLine($">>> HttpMethod: {httpMethod}");
+
+
         foreach (var roleName in roleNames)
         {
             var roleEntity = await _roleManager.FindByNameAsync(roleName);
             if (roleEntity is null) continue;
 
-            var hasPermission = await _permissionService.HasPermissionAsync(
-                roleEntity.Id, controller, action, httpMethod);
+            //Console.WriteLine($">>> Checking RoleId: {roleEntity.Id} for permission...");
+
+            var hasPermission = await _permissionService.HasPermissionAsync(roleEntity.Id, controller, action, httpMethod);
+
+            //Console.WriteLine($">>> HasPermission: {hasPermission}");
+
 
             if (hasPermission)
             {

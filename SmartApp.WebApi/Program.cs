@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Scalar.AspNetCore;
+using SmartApp.Application;
 using SmartApp.Application.Interfaces.Auth;
 using SmartApp.Application.ModelMapper;
 using SmartApp.Domain.Entities.Auth;
@@ -70,7 +71,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddOpenApiWithAuth(builder.Configuration);
-
+builder.Services.AddApplicationDI();
 builder.Services.AddPersistenceDI(builder.Configuration);
 builder.Services.AddInfrastructureDI();
 builder.Services.AddAutoMapper(config => config.AddProfile<MappingConfig>());
