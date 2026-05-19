@@ -9,7 +9,7 @@ using SmartApp.Persistence.Repositories;
 
 namespace SmartApp.Persistence
 {
-    public static class DependencyInjection
+    public static class PersistenceDI
     {
         public static void AddPersistenceDI(this IServiceCollection services, IConfiguration configuration)
         {
