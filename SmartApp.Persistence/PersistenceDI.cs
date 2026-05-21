@@ -5,6 +5,7 @@ using SmartApp.Application.Interfaces.Auth;
 using SmartApp.Application.Interfaces.Repositories;
 using SmartApp.Persistence.DBContext;
 using SmartApp.Persistence.EntityRepositories.PermissionRepo;
+using SmartApp.Persistence.EntityRepositories.User;
 using SmartApp.Persistence.Repositories;
 
 namespace SmartApp.Persistence
@@ -32,6 +33,7 @@ namespace SmartApp.Persistence
             services.AddScoped<IPermissionRepository, PermissionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
     }
 }
