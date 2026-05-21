@@ -31,6 +31,7 @@ namespace SmartApp.Persistence
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IPermissionRepository, PermissionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
         }
     }
 }

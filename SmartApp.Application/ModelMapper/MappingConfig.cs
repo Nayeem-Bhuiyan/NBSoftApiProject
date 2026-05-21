@@ -29,6 +29,8 @@ namespace SmartApp.Application.ModelMapper
             CreateMap<ApplicationUser, RegisterDto>().ReverseMap();
                     CreateMap<ApplicationUser, ApplicationUserDto>().ReverseMap();
 
+            CreateMap<ApplicationRole, RoleDto>()
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             #endregion
         }
     }
