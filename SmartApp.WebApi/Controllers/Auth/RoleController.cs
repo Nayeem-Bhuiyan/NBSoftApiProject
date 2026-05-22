@@ -9,9 +9,11 @@ using SmartApp.Application.Features.Auth.RoleManagement.Commands.UpdateRole;
 using SmartApp.Application.Features.Auth.RoleManagement.Queries.GetAllRoles;
 using SmartApp.Application.Features.Auth.RoleManagement.Queries.GetRoleById;
 using SmartApp.Application.Features.Auth.RoleManagement.Queries.GetRolePermissions;
+using SmartApp.WebApi.RateLimit;
 
 namespace SmartApp.WebApi.Controllers.Auth;
 
+[RateLimitPolicy("Admin")]          // ← applies to all actions
 [Authorize(Policy = "DynamicPermission")]
 [ApiController]
 [Route("api/[controller]")]

@@ -6,9 +6,11 @@ using SmartApp.Application.Features.MasterData.Countries.Commands.DeleteCountry;
 using SmartApp.Application.Features.MasterData.Countries.Commands.UpdateCountry;
 using SmartApp.Application.Features.MasterData.Countries.Queries.GetCountriesPaged;
 using SmartApp.Application.Features.MasterData.Countries.Queries.GetCountryById;
+using SmartApp.WebApi.RateLimit;
 
 namespace SmartApp.WebApi.Controllers.MasterData;
 
+[RateLimitPolicy("General")]        // ← controller-level default
 [ApiController]
 [Route("api/[controller]")]
 public class CountryController : ControllerBase
@@ -20,6 +22,7 @@ public class CountryController : ControllerBase
         _sender = sender;
     }
 
+    [DisableRateLimiting]           // ← override: public lookup, no limit
     [HttpGet]
     public async Task<IActionResult> GetPaged(
         [FromQuery] string filter,

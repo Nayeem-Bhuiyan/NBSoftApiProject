@@ -7,6 +7,7 @@ using SmartApp.Application.Interfaces.Auth;
 using SmartApp.Domain.Entities.Auth;
 using SmartApp.Domain.ValueObjects;
 using SmartApp.Shared.Common;
+using SmartApp.WebApi.RateLimit;
 using System.Security.Claims;
 
 namespace SmartApp.WebApi.Controllers.Auth;
@@ -35,6 +36,7 @@ public class UserController : ControllerBase
         _mapper              = mapper;
     }
 
+    [DisableRateLimiting]               // ← no limit
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto model, CancellationToken ct = default)
     {
@@ -55,6 +57,7 @@ public class UserController : ControllerBase
         return Ok(Response<string>.SuccessResponse(null, "User registered successfully."));
     }
 
+    [RateLimitPolicy("Login")]          // ← 5 req/min per IP
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto model, CancellationToken ct = default)
     {
@@ -80,6 +83,7 @@ public class UserController : ControllerBase
             authResponse with { User = userDto }, "Login successful."));
     }
 
+    [RateLimitPolicy("General")]        // ← 100 req/min per IP
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request, CancellationToken ct = default)
     {

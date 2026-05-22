@@ -13,6 +13,7 @@ using SmartApp.WebApi.Authorization;
 using SmartApp.WebApi.Configuration;
 using SmartApp.WebApi.Extensions;
 using SmartApp.WebApi.Middleware;
+using SmartApp.WebApi.RateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,11 @@ var jwtSettings = builder.Configuration
     .Get<JwtSettings>();
 jwtSettings?.Validate();
 
-builder.Services.AddControllers();
+builder.Services.AddRateLimiting(builder.Configuration);
+builder.Services.AddControllers(options =>
+{
+    options.Filters.AddService<RateLimitFilter>();
+});
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
