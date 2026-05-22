@@ -26,9 +26,4 @@
     <ProjectReference Include="..\SmartApp.Shared\SmartApp.Shared.csproj" />
   </ItemGroup>
 
-
-	<ItemGroup>
-	  <Folder Include="NewFolder\" />
-	</ItemGroup>
-
 </Project>
