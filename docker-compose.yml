@@ -1,33 +1,85 @@
+name: smartapp
+
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: smartapp-sqlserver
+
     restart: unless-stopped
+
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "NayeemDev2026@Secure#Pass01"
       MSSQL_PID: "Developer"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+
     ports:
       - "1433:1433"
+
     volumes:
       - mssql-data:/var/opt/mssql
+      - type: bind
+        source: C:\backups
+        target: /var/opt/mssql/backup
+
     networks:
       - smartapp-network
+
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'NayeemDev2026@Secure#Pass01' -Q 'SELECT 1' -b -o /dev/null"]
-      interval: 10s
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P '${SA_PASSWORD}' -Q 'SELECT 1' -b -o /dev/null"
+        ]
+      interval: 15s
       timeout: 10s
-      retries: 20
-      start_period: 30s
+      retries: 10
+      start_period: 60s
+
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+        reservations:
+          memory: 2G
+          cpus: "1.0"
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+    security_opt:
+      - no-new-privileges:true
 
   redis:
     image: redis:7-alpine
     container_name: smartapp-redis
+
     restart: unless-stopped
+
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--appendfsync",
+        "everysec",
+        "--save",
+        "60",
+        "1000"
+      ]
+
     ports:
       - "6379:6379"
+
+    volumes:
+      - redis-data:/data
+
     networks:
       - smartapp-network
+
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -35,39 +87,100 @@ services:
       retries: 5
       start_period: 10s
 
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.50"
+        reservations:
+          memory: 256M
+          cpus: "0.25"
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+    security_opt:
+      - no-new-privileges:true
+
   smartapp-api:
     build:
       context: .
       dockerfile: Dockerfile
+
+    image: smartapp-api:latest
     container_name: smartapp-api
+
     restart: unless-stopped
-    ports:
-      - "8080:8080"
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__AppDbConnection: "Server=sqlserver;Database=NBSoftApiDB;User Id=sa;Password=NayeemDev2026@Secure#Pass01;TrustServerCertificate=True;MultipleActiveResultSets=true;"
-      ConnectionStrings__Redis: "redis:6379"
-      Jwt__Key: "dfjgsdjkfbsjkdhfjsdrhewdfjg_djhfjdhf_22323df4!"
-      Jwt__Issuer: "SmartApp"
-      Jwt__Audience: "SmartAppUsers"
-      Jwt__AccessTokenExpirationMinutes: "60"
-      Jwt__AllowInsecureHttp: "true"
-      Cors__AllowedOrigins__0: "http://localhost:4200"
-      Cors__AllowedOrigins__1: "http://localhost:8080"
+
     depends_on:
       sqlserver:
         condition: service_healthy
+
       redis:
         condition: service_healthy
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+
+      ConnectionStrings__AppDbConnection: "Server=sqlserver;Database=NBSoftApiDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;MultipleActiveResultSets=true;"
+
+      Redis__ConnectionString: "redis:6379"
+
+    ports:
+      - "8080:8080"
+
     volumes:
-      - ./uploads/wwwroot:/app/wwwroot  # ← bind mount, host path auto-created by Docker
+      - type: bind
+        source: ./uploads/wwwroot
+        target: /app/wwwroot
+
     networks:
       - smartapp-network
 
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail http://localhost:8080/health || exit 1"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+        reservations:
+          memory: 512M
+          cpus: "0.50"
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+    security_opt:
+      - no-new-privileges:true
+
+    tmpfs:
+      - /tmp
+
 networks:
   smartapp-network:
+    name: smartapp-network
     driver: bridge
 
 volumes:
-  mssql-data:  # ← only SQL Server needs named volume now
+  mssql-data:
+    name: smartapp_mssql-data
+
+  redis-data:
+    name: smartapp_redis-data
