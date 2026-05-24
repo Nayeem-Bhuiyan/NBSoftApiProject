@@ -12,10 +12,17 @@ using SmartApp.Persistence.DBContext;
 using SmartApp.WebApi.Authorization;
 using SmartApp.WebApi.Configuration;
 using SmartApp.WebApi.Extensions;
+using SmartApp.WebApi.Logging;
 using SmartApp.WebApi.Middleware;
 using SmartApp.WebApi.RateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region SerioLog_Settings
+builder.AddSerilogLogging();
+builder.Services.Configure<LogSettings>(
+builder.Configuration.GetSection(LogSettings.SectionName));
+#endregion
 
 var jwtSettings = builder.Configuration
     .GetSection(JwtSettings.SectionName)
@@ -98,7 +105,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseMiddleware<CorrelationIdMiddleware>(); 
+app.UseMiddleware<RequestLoggingMiddleware>(); 
 app.UseMiddleware<GlobalExceptionMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

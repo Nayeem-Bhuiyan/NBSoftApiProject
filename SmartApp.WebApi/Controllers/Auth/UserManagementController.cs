@@ -7,6 +7,7 @@ using SmartApp.Application.Features.Auth.UserManagement.Commands.RevokeUserRole;
 using SmartApp.Application.Features.Auth.UserManagement.Commands.SetUserActiveStatus;
 using SmartApp.Application.Features.Auth.UserManagement.Queries.GetUserById;
 using SmartApp.Application.Features.Auth.UserManagement.Queries.GetUsersPaged;
+using SmartApp.WebApi.Logging;
 using SmartApp.WebApi.RateLimit;
 
 namespace SmartApp.WebApi.Controllers.Auth;
@@ -64,7 +65,7 @@ public sealed class UserManagementController : ControllerBase
         var result = await _sender.Send(command, ct);
         return result.isSuccess ? Ok(result) : BadRequest(result);
     }
-
+    [LogResponseBody]
     [HttpPatch("{userId}/active-status")]
     public async Task<IActionResult> SetActiveStatus(
         string userId,
@@ -74,7 +75,7 @@ public sealed class UserManagementController : ControllerBase
         var result = await _sender.Send(new SetUserActiveStatusCommand(userId, isActive), ct);
         return result.isSuccess ? Ok(result) : BadRequest(result);
     }
-
+    [LogResponseBody]
     [RateLimitPolicy("PasswordReset")]  // ← 3 req/hour per user
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword(

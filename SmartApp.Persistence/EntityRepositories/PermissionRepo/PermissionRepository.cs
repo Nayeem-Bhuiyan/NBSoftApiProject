@@ -31,14 +31,24 @@ public class PermissionRepository : IPermissionRepository
 
     public async Task<List<PermissionCacheEntry>> GetGrantedPermissionsAsync(string roleId)
     {
-        return await _db.RolePermissions
+        var result= await _db.RolePermissions
             .AsNoTracking()
+            .Include(rp => rp.Permission)
             .Where(rp => rp.RoleId == roleId && rp.IsGranted)
             .Select(rp => new PermissionCacheEntry(
                 rp.Permission.Controller,
                 rp.Permission.Action,
                 rp.Permission.HttpMethod))
             .ToListAsync();
+
+        #region debug_code
+        //Console.WriteLine($">>> DB query for RoleId: {roleId}");
+        //Console.WriteLine($">>> Found {result.Count} permissions");
+        //foreach (var p in result)
+        //    Console.WriteLine($">>> {p.Controller} | {p.Action} | {p.HttpMethod}");
+        #endregion
+
+        return result;
     }
 
     public async Task SaveChangesAsync()

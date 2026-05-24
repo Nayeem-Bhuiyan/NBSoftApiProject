@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SmartApp.Application.DTOs.Common;
 using SmartApp.Domain.Entities;
 using SmartApp.Domain.Entities.Auth;
+using SmartApp.Domain.Entities.Logging;
 using SmartApp.Domain.Entities.MasterData;
 
 
@@ -29,6 +30,10 @@ namespace SmartApp.Persistence.DBContext
         #region Auth
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        #endregion
+
+        #region Logging
+        public DbSet<ApplicationLog> ApplicationLogs { get; set; }
         #endregion
 
         // Auto change tracker for audit fields
@@ -109,6 +114,29 @@ namespace SmartApp.Persistence.DBContext
                 entity.ToTable("Permissions");
                 entity.HasKey(p => p.Id);
                 entity.HasIndex(p => new { p.Controller, p.Action, p.HttpMethod }).IsUnique();
+            });
+            #endregion
+
+            #region Logging
+            modelBuilder.Entity<ApplicationLog>(entity =>
+            {
+                entity.ToTable("ApplicationLogs");
+                entity.HasKey(l => l.Id);
+                entity.Property(l => l.Level).HasMaxLength(50);
+                entity.Property(l => l.CorrelationId).HasMaxLength(100);
+                entity.Property(l => l.UserId).HasMaxLength(450);
+                entity.Property(l => l.UserName).HasMaxLength(256);
+                entity.Property(l => l.ClientIp).HasMaxLength(50);
+                entity.Property(l => l.RequestPath).HasMaxLength(500);
+                entity.Property(l => l.HttpMethod).HasMaxLength(10);
+                entity.Property(l => l.MachineName).HasMaxLength(100);
+                entity.Property(l => l.Environment).HasMaxLength(50);
+
+                // ← index for common query patterns in fintech log analysis
+                entity.HasIndex(l => l.TimeStamp);
+                entity.HasIndex(l => l.Level);
+                entity.HasIndex(l => l.CorrelationId);
+                entity.HasIndex(l => l.UserId);
             });
             #endregion
 

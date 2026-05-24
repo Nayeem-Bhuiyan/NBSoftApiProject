@@ -57,11 +57,11 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
 
         //temp code check role
         // ← ADD temporary debug
-        //Console.WriteLine($">>> UserId: {userId}");
-        //Console.WriteLine($">>> Roles: {string.Join(", ", roleNames)}");
-        //Console.WriteLine($">>> Controller: {controller}");
-        //Console.WriteLine($">>> Action: {action}");
-        //Console.WriteLine($">>> HttpMethod: {httpMethod}");
+        Console.WriteLine($">>> UserId: {userId}");
+        Console.WriteLine($">>> Roles: {string.Join(", ", roleNames)}");
+        Console.WriteLine($">>> Controller: {controller}");
+        Console.WriteLine($">>> Action: {action}");
+        Console.WriteLine($">>> HttpMethod: {httpMethod}");
 
 
         foreach (var roleName in roleNames)
@@ -69,11 +69,11 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
             var roleEntity = await _roleManager.FindByNameAsync(roleName);
             if (roleEntity is null) continue;
 
-            //Console.WriteLine($">>> Checking RoleId: {roleEntity.Id} for permission...");
+            Console.WriteLine($">>> Checking RoleId: {roleEntity.Id} for permission...");
 
             var hasPermission = await _permissionService.HasPermissionAsync(roleEntity.Id, controller, action, httpMethod);
 
-            //Console.WriteLine($">>> HasPermission: {hasPermission}");
+            Console.WriteLine($">>> HasPermission: {hasPermission}");
 
 
             if (hasPermission)
