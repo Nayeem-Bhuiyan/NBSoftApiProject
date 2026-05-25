@@ -88,15 +88,33 @@ builder.Services.AddPersistenceDI(builder.Configuration);
 builder.Services.AddInfrastructureDI();
 builder.Services.AddAutoMapper(config => config.AddProfile<MappingConfig>());
 
+builder.Services.AddHealthChecks()
+    .AddSqlServer(
+        builder.Configuration.GetConnectionString("AppDbConnection")!,
+        name: "sqlserver",
+        timeout: TimeSpan.FromSeconds(5))
+    .AddRedis(
+        builder.Configuration.GetConnectionString("Redis")!,
+        name: "redis",
+        timeout: TimeSpan.FromSeconds(3));
+
 var app = builder.Build();
 await app.ApplyMigrationsAsync();
 
 app.UseCors("SmartAppCors");
-app.UseHttpsRedirection(); 
+app.UseHttpsRedirection();
 
-if (app.Environment.IsDevelopment())
+var apiDocConfig = builder.Configuration.GetSection("ApiDocumentation");
+var enableOpenApi = apiDocConfig.GetValue<bool>("EnableOpenApi");
+var enableScalar = apiDocConfig.GetValue<bool>("EnableScalar");
+
+if (enableOpenApi)
 {
     app.MapOpenApi();
+}
+
+if (enableScalar)
+{
     app.MapScalarApiReference(options =>
     {
         options.Title = "SmartApp API";
@@ -111,6 +129,7 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHealthChecks("/health");
 app.MapControllers();
 
 app.Run();
